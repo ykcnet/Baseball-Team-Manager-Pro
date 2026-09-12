@@ -1,0 +1,332 @@
+/* ==========================================
+   Lineup Page
+========================================== */
+
+.lineup-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+
+/* ==========================================
+   Lineup Table Wrapper
+========================================== */
+
+.lineup-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* ==========================================
+   Lineup Table
+========================================== */
+
+.lineup-table {
+    width: 100%;
+    min-width: 720px;
+
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    background: #fff;
+}
+
+
+/* ==========================================
+   Header
+========================================== */
+
+.lineup-table th {
+    padding: 12px 10px;
+
+    border-bottom: 2px solid #ccc;
+
+    text-align: left;
+    white-space: nowrap;
+}
+
+
+/* ==========================================
+   Cells
+========================================== */
+
+.lineup-table td {
+    padding: 10px;
+
+    border-bottom: 1px solid #ddd;
+
+    vertical-align: middle;
+}
+
+
+/* ==========================================
+   棒次
+========================================== */
+
+.lineup-table th:nth-child(1),
+.lineup-table td:nth-child(1) {
+    width: 80px;
+    min-width: 80px;
+
+    text-align: center;
+}
+
+
+/* ==========================================
+   球員
+========================================== */
+
+.lineup-table th:nth-child(2),
+.lineup-table td:nth-child(2) {
+    width: 320px;
+    min-width: 320px;
+}
+
+
+/* ==========================================
+   守位
+========================================== */
+
+.lineup-table th:nth-child(3),
+.lineup-table td:nth-child(3) {
+    width: 180px;
+    min-width: 180px;
+}
+
+
+/* ==========================================
+   Player Select
+========================================== */
+
+.player-select {
+    display: block;
+
+    width: 100%;
+    min-width: 280px;
+
+    padding: 10px;
+
+    font-size: 16px;
+
+    border: 1px solid #aaa;
+    border-radius: 6px;
+
+    background: #fff;
+}
+
+
+/* ==========================================
+   Position Select
+========================================== */
+
+.position-select {
+    display: block;
+
+    width: 100%;
+    min-width: 140px;
+
+    padding: 10px;
+
+    font-size: 16px;
+
+    border: 1px solid #aaa;
+    border-radius: 6px;
+
+    background: #fff;
+}
+
+
+/* ==========================================
+   Actions
+========================================== */
+
+.lineup-actions {
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+    flex-wrap: wrap;
+}
+
+
+.lineup-actions button {
+    padding: 10px 16px;
+
+    border: 1px solid #999;
+    border-radius: 6px;
+
+    background: #fff;
+}
+
+
+/* ==========================================
+   Message
+========================================== */
+
+#lineup-message {
+    margin-top: 12px;
+}
+
+
+.success {
+    margin-top: 10px;
+
+    padding: 8px;
+
+    color: #176b2c;
+    background: #e8f5e9;
+
+    border-radius: 6px;
+}
+
+
+.error {
+    margin-top: 10px;
+
+    padding: 8px;
+
+    color: #a40000;
+    background: #f8d7da;
+
+    border-radius: 6px;
+}
+
+
+/* ==========================================
+   Lineup Card
+========================================== */
+
+.lineup-card {
+    width: 100%;
+
+    margin-top: 20px;
+    padding: 16px;
+
+    background: #fff;
+
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+
+.lineup-card h3 {
+    margin-bottom: 16px;
+}
+
+
+.lineup-card-actions {
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+    flex-wrap: wrap;
+}
+
+
+/* ==========================================
+   Availability
+========================================== */
+
+.lineup-availability {
+    margin-bottom: 12px;
+}
+
+
+.lineup-warning {
+    margin: 4px 0;
+}
+
+
+/* ==========================================
+   Status
+========================================== */
+
+.lineup-status {
+    display: inline-block;
+
+    padding: 4px 8px;
+
+    border-radius: 4px;
+
+    font-size: 0.9rem;
+}
+
+
+.lineup-status.normal {
+    background: #e8f5e9;
+}
+
+
+.lineup-status.injured {
+    background: #fff3cd;
+}
+
+
+.lineup-status.suspended {
+    background: #f8d7da;
+}
+
+
+.lineup-status.warning {
+    background: #f8d7da;
+}
+
+
+.lineup-player-warning {
+    background: #fffaf0;
+}
+
+
+.lineup-player-missing {
+    background: #fff0f0;
+}
+
+
+/* ==========================================
+   Empty
+========================================== */
+
+.lineup-empty {
+    margin-top: 20px;
+    padding: 16px;
+
+    background: #fff;
+
+    border-radius: 8px;
+}
+
+
+/* ==========================================
+   Mobile
+========================================== */
+
+@media (max-width: 768px) {
+
+    .lineup-page {
+        padding: 12px;
+    }
+
+    .lineup-table {
+        min-width: 720px;
+    }
+
+    .player-select {
+        min-width: 280px;
+    }
+
+    .position-select {
+        min-width: 140px;
+    }
+
+}

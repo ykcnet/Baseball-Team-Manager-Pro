@@ -1,0 +1,1000 @@
+import { loadData, saveData } from '../core/storage.js';
+import { getPlayers } from '../player/playerService.js';
+import { getCurrentLineup } from '../lineup/lineupManager.js';
+
+export function renderScoreSheetPage(container) {
+  const data = loadData();
+  const players = Array.isArray(data.players) ? data.players : [];
+  const scoreSheets = Array.isArray(data.scoreSheets) ? data.scoreSheets : [];
+
+  container.innerHTML = `
+    <section class="score-sheet-page">
+      <div class="page-intro">
+        <div>
+          <p class="eyebrow">SCORE SHEET</p>
+          <h2>比賽紀錄表</h2>
+          <p>建立完整的比賽紀錄表，包含打擊、投手和局數統計</p>
+        </div>
+        <div class="dashboard-ball" aria-hidden="true">📋</div>
+      </div>
+
+      <div class="score-sheet-actions">
+        <button type="button" id="newScoreSheetBtn" class="btn-primary">📝 新增比賽紀錄</button>
+        <button type="button" id="viewHistoryBtn" class="btn-secondary">📚 查看歷史紀錄</button>
+      </div>
+
+      <div id="scoreSheetContent">
+        ${renderScoreSheetForm(players)}
+      </div>
+    </section>
+  `;
+
+  setupScoreSheetHandlers(container, players);
+}
+
+function renderScoreSheetForm(players) {
+  return `
+    <div class="score-sheet-form">
+      <h3>基本比賽資訊</h3>
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="teamName">球隊名稱</label>
+          <input type="text" id="teamName" placeholder="輸入球隊名稱">
+        </div>
+        <div class="form-field">
+          <label for="opponent">對手球隊</label>
+          <input type="text" id="opponent" placeholder="輸入對手名稱">
+        </div>
+        <div class="form-field">
+          <label for="gameDate">比賽日期</label>
+          <input type="date" id="gameDate">
+        </div>
+        <div class="form-field">
+          <label for="venue">比賽地點</label>
+          <input type="text" id="venue" placeholder="輸入比賽地點">
+        </div>
+        <div class="form-field">
+          <label for="gameName">比賽名稱</label>
+          <input type="text" id="gameName" placeholder="輸入比賽名稱">
+        </div>
+        <div class="form-field">
+          <label for="homeAway">主客場</label>
+          <select id="homeAway">
+            <option value="home">主場</option>
+            <option value="away">客場</option>
+          </select>
+        </div>
+      </div>
+
+      <h3>局數紀錄表</h3>
+      <div class="inning-section">
+        <table class="inning-table">
+          <thead>
+            <tr>
+              <th>球隊</th>
+              ${Array.from({length: 9}, (_, i) => `<th>${i + 1}</th>`).join('')}
+              <th>R</th>
+              <th>H</th>
+              <th>E</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>先攻 (客)</td>
+              ${Array.from({length: 12}, () => `<td><input type="number" class="inning-input" min="0" value="0"></td>`).join('')}
+            </tr>
+            <tr>
+              <td>後攻 (主)</td>
+              ${Array.from({length: 12}, () => `<td><input type="number" class="inning-input" min="0" value="0"></td>`).join('')}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>打擊與守備表現紀錄區</h3>
+      <div class="batting-section">
+        <div class="lineup-selector">
+          <label for="useLineup">使用先發名單：</label>
+          <select id="useLineup">
+            <option value="current">使用當前先發名單</option>
+            <option value="custom">自選球員</option>
+          </select>
+        </div>
+        <table class="batting-table">
+          <thead>
+            <tr>
+              <th>棒次</th>
+              <th>身分</th>
+              <th>背號</th>
+              <th>姓名</th>
+              <th>守位</th>
+              ${Array.from({length: 9}, (_, i) => `<th>${i + 1}</th>`).join('')}
+              <th>AB<br>打數</th>
+              <th>R<br>得分</th>
+              <th>H<br>安打</th>
+              <th>RBI<br>打點</th>
+              <th>BB/HP<br>四死</th>
+              <th>SO<br>三振</th>
+              <th>SB<br>盜壘</th>
+              <th>E<br>失誤</th>
+              <th>AVG<br>打擊率</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="battingRecordBody">
+            ${renderBattingRecordRows(players, [])}
+          </tbody>
+          <tfoot>
+            <tr class="team-total-row">
+              <td colspan="5"><strong>團隊打擊與守備總計</strong></td>
+              ${Array.from({length: 9}, () => `<td></td>`).join('')}
+              <td id="teamTotalAtBats">0</td>
+              <td id="teamTotalRuns">0</td>
+              <td id="teamTotalHits">0</td>
+              <td id="teamTotalRBI">0</td>
+              <td id="teamTotalWalks">0</td>
+              <td id="teamTotalStrikeouts">0</td>
+              <td id="teamTotalStolenBases">0</td>
+              <td id="teamTotalErrors">0</td>
+              <td id="teamBattingAverage">.000</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+        <button type="button" id="addBattingRecordBtn" class="btn-small">+ 新增打擊記錄</button>
+      </div>
+
+      <h3>投手表現紀錄專區</h3>
+      <div class="pitching-section">
+        <table class="pitching-table">
+          <thead>
+            <tr>
+              <th>順序</th>
+              <th>姓名</th>
+              <th>背號</th>
+              <th>IP<br>局數</th>
+              <th>BF<br>人次</th>
+              <th>NP<br>球數</th>
+              <th>H<br>被安打</th>
+              <th>R<br>失分</th>
+              <th>ER<br>自責分</th>
+              <th>BB<br>四死</th>
+              <th>SO<br>三振</th>
+              <th>HR<br>被轟</th>
+              <th>ERA<br>防禦率</th>
+            </tr>
+          </thead>
+          <tbody id="pitchingRecordBody">
+            ${renderPitchingRecordRows(players, [])}
+          </tbody>
+          <tfoot>
+            <tr class="team-total-row">
+              <td colspan="3"><strong>團隊投手總計</strong></td>
+              <td id="teamTotalInnings">0</td>
+              <td id="teamTotalBattersFaced">0</td>
+              <td id="teamTotalPitches">0</td>
+              <td id="teamTotalHitsAllowed">0</td>
+              <td id="teamTotalRunsAllowed">0</td>
+              <td id="teamTotalEarnedRuns">0</td>
+              <td id="teamTotalPitchingWalks">0</td>
+              <td id="teamTotalPitchingStrikeouts">0</td>
+              <td id="teamTotalHomeRuns">0</td>
+              <td id="teamERA">0.00</td>
+            </tr>
+          </tfoot>
+        </table>
+        <button type="button" id="addPitchingRecordBtn" class="btn-small">+ 新增投手記錄</button>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="saveScoreSheetBtn" class="btn-primary">💾 儲存比賽紀錄</button>
+        <button type="button" id="clearScoreSheetBtn" class="btn-secondary">🗑️ 清空表單</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderBattingRecordRows(players, starters) {
+  if (starters.length === 0) {
+    // Create empty rows for 9 batting orders
+    let rows = '';
+    for (let i = 1; i <= 9; i++) {
+      rows += `
+        <tr data-batting-order="${i}">
+          <td>${i}</td>
+          <td>
+            <select class="identity-select" data-field="identity">
+              <option value="starter">先發</option>
+              <option value="substitute-batting">代打</option>
+              <option value="substitute-running">代跑</option>
+              <option value="defensive-replacement">守備替換</option>
+              <option value="injury">受傷退場</option>
+            </select>
+          </td>
+          <td class="jersey-cell">
+            <select class="player-select" data-field="playerId">
+              <option value="">選擇球員</option>
+              ${players.map(p => `<option value="${p.id}">#${p.number} ${p.name}</option>`).join('')}
+            </select>
+          </td>
+          <td class="player-name"></td>
+          <td>
+            <select class="position-select" data-field="position">
+              <option value="">選擇守位</option>
+              <option value="P">投手</option>
+              <option value="C">捕手</option>
+              <option value="1B">一壘手</option>
+              <option value="2B">二壘手</option>
+              <option value="3B">三壘手</option>
+              <option value="SS">游擊手</option>
+              <option value="LF">左外野</option>
+              <option value="CF">中外野</option>
+              <option value="RF">右外野</option>
+              <option value="DH">指定打擊</option>
+            </select>
+          </td>
+          ${Array.from({length: 9}, (_, i) => `
+            <td><input type="text" class="inning-result-input" data-inning="${i + 1}" placeholder="輸入結果"></td>
+          `).join('')}
+          <td><input type="number" class="stat-input" data-field="atBats" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="runs" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="hits" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="rbi" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="walks" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="strikeouts" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="stolenBases" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="errors" min="0" value="0"></td>
+          <td class="batting-average">.000</td>
+          <td></td>
+        </tr>
+      `;
+    }
+    return rows;
+  }
+
+  // Use current lineup
+  return starters.map((starter, index) => {
+    const battingOrder = index + 1;
+    const player = players.find(p => String(p.id) === String(starter.playerId));
+    const playerName = player?.name || player?.playerName || '';
+    const playerNumber = player?.number || player?.jerseyNumber || '';
+    const position = typeof starter === 'object' ? starter.position : '';
+    
+    return `
+      <tr data-batting-order="${battingOrder}">
+        <td>${battingOrder}</td>
+        <td>
+          <select class="identity-select" data-field="identity">
+            <option value="starter" selected>先發</option>
+            <option value="substitute-batting">代打</option>
+            <option value="substitute-running">代跑</option>
+            <option value="defensive-replacement">守備替換</option>
+            <option value="injury">受傷退場</option>
+          </select>
+        </td>
+        <td>${playerNumber}</td>
+        <td class="player-name">${playerName}</td>
+        <td>${position}</td>
+        ${Array.from({length: 9}, (_, i) => `
+          <td><input type="text" class="inning-result-input" data-inning="${i + 1}" placeholder="輸入結果"></td>
+        `).join('')}
+        <td><input type="number" class="stat-input" data-field="atBats" min="0" value="0"></td>
+        <td><input type="number" class="stat-input" data-field="runs" min="0" value="0"></td>
+        <td><input type="number" class="stat-input" data-field="hits" min="0" value="0"></td>
+        <td><input type="number" class="stat-input" data-field="rbi" min="0" value="0"></td>
+        <td><input type="number" class="stat-input" data-field="walks" min="0" value="0"></td>
+        <td><input type="number" class="stat-input" data-field="strikeouts" min="0" value="0"></td>
+        <td><input type="number" class="stat-input" data-field="stolenBases" min="0" value="0"></td>
+        <td><input type="number" class="stat-input" data-field="errors" min="0" value="0"></td>
+        <td class="batting-average">.000</td>
+        <td></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderPitchingRecordRows(players, starters) {
+  const pitchers = players.filter(p => p.position === '投手' || p.positions?.some(pos => pos.code === 'P'));
+  
+  // Find starting pitcher from lineup
+  let startingPitcher = null;
+  if (starters && starters.length === 9) {
+    const pitcherStarter = starters.find(starter => {
+      const position = typeof starter === 'object' ? starter.position : '';
+      return position === 'P';
+    });
+    
+    if (pitcherStarter) {
+      const pitcherId = typeof pitcherStarter === 'string' ? pitcherStarter : pitcherStarter.playerId;
+      startingPitcher = pitchers.find(p => String(p.id) === String(pitcherId));
+    }
+  }
+  
+  let rows = '';
+  
+  // Starting pitcher
+  if (startingPitcher) {
+    rows += `
+      <tr data-pitcher-type="starter" data-pitcher-id="${startingPitcher.id}">
+        <td>先發</td>
+        <td>${startingPitcher.name}</td>
+        <td>${startingPitcher.number}</td>
+        <td><input type="number" class="pitching-input" data-field="innings" min="0" step="0.1" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="battersFaced" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="pitches" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="hitsAllowed" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="runsAllowed" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="earnedRuns" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="walks" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="strikeouts" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="homeRuns" min="0" value="0"></td>
+        <td class="era">0.00</td>
+      </tr>
+    `;
+  } else {
+    rows += `
+      <tr data-pitcher-type="starter" data-pitcher-id="">
+        <td>先發</td>
+        <td>
+          <select class="pitcher-select" data-field="playerId">
+            <option value="">選擇投手</option>
+            ${pitchers.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+          </select>
+        </td>
+        <td class="pitcher-number"></td>
+        <td><input type="number" class="pitching-input" data-field="innings" min="0" step="0.1" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="battersFaced" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="pitches" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="hitsAllowed" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="runsAllowed" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="earnedRuns" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="walks" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="strikeouts" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="homeRuns" min="0" value="0"></td>
+        <td class="era">0.00</td>
+      </tr>
+    `;
+  }
+  
+  // Relief pitchers
+  for (let i = 2; i <= 4; i++) {
+    rows += `
+      <tr data-pitcher-type="relief" data-pitcher-id="">
+        <td>第 ${i} 任</td>
+        <td>
+          <select class="pitcher-select" data-field="playerId">
+            <option value="">選擇投手</option>
+            ${pitchers.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+          </select>
+        </td>
+        <td class="pitcher-number"></td>
+        <td><input type="number" class="pitching-input" data-field="innings" min="0" step="0.1" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="battersFaced" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="pitches" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="hitsAllowed" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="runsAllowed" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="earnedRuns" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="walks" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="strikeouts" min="0" value="0"></td>
+        <td><input type="number" class="pitching-input" data-field="homeRuns" min="0" value="0"></td>
+        <td class="era">0.00</td>
+      </tr>
+    `;
+  }
+  
+  return rows;
+}
+
+function setupScoreSheetHandlers(container, players) {
+  // Set default date to today
+  const dateInput = container.querySelector('#gameDate');
+  if (dateInput) {
+    dateInput.value = new Date().toISOString().split('T')[0];
+  }
+
+  // Auto-load current lineup on page load
+  const useLineupSelect = container.querySelector('#useLineup');
+  if (useLineupSelect && useLineupSelect.value === 'current') {
+    const currentLineup = getCurrentLineup();
+    const starters = currentLineup && Array.isArray(currentLineup.starters) ? currentLineup.starters : [];
+    
+    const battingBody = container.querySelector('#battingRecordBody');
+    if (battingBody) {
+      battingBody.innerHTML = renderBattingRecordRows(players, starters);
+    }
+    
+    const pitchingBody = container.querySelector('#pitchingRecordBody');
+    if (pitchingBody) {
+      pitchingBody.innerHTML = renderPitchingRecordRows(players, starters);
+    }
+    
+    // Initialize pitcher selection filtering
+    setTimeout(() => {
+      updatePitcherSelects(container, players, null);
+    }, 100);
+  }
+
+  // Initial update of team totals
+  updateTeamBattingTotals(container);
+  updateTeamPitchingTotals(container);
+
+  // Lineup selection
+  if (useLineupSelect) {
+    useLineupSelect.addEventListener('change', (e) => {
+      if (e.target.value === 'current') {
+        const currentLineup = getCurrentLineup();
+        const starters = currentLineup && Array.isArray(currentLineup.starters) ? currentLineup.starters : [];
+        
+        const battingBody = container.querySelector('#battingRecordBody');
+        if (battingBody) {
+          battingBody.innerHTML = renderBattingRecordRows(players, starters);
+        }
+        
+        const pitchingBody = container.querySelector('#pitchingRecordBody');
+        if (pitchingBody) {
+          pitchingBody.innerHTML = renderPitchingRecordRows(players, starters);
+        }
+        
+        // Update totals after lineup change
+        updateTeamBattingTotals(container);
+        updateTeamPitchingTotals(container);
+        
+        // Initialize pitcher selection filtering
+        setTimeout(() => {
+          updatePitcherSelects(container, players, null);
+        }, 100);
+      } else {
+        // Reset to empty form
+        const battingBody = container.querySelector('#battingRecordBody');
+        if (battingBody) {
+          battingBody.innerHTML = renderBattingRecordRows(players, []);
+        }
+        
+        const pitchingBody = container.querySelector('#pitchingRecordBody');
+        if (pitchingBody) {
+          pitchingBody.innerHTML = renderPitchingRecordRows(players, []);
+        }
+        
+        // Update totals after reset
+        updateTeamBattingTotals(container);
+        updateTeamPitchingTotals(container);
+        
+        // Reset pitcher selection filtering
+        setTimeout(() => {
+          updatePitcherSelects(container, players, null);
+        }, 100);
+      }
+    });
+  }
+
+  // Real-time batting average calculation
+  container.addEventListener('input', (e) => {
+    if (e.target.classList.contains('stat-input') && e.target.dataset.field === 'atBats' || 
+        e.target.classList.contains('stat-input') && e.target.dataset.field === 'hits') {
+      const row = e.target.closest('tr');
+      if (row) {
+        const atBats = parseInt(row.querySelector('[data-field="atBats"]')?.value) || 0;
+        const hits = parseInt(row.querySelector('[data-field="hits"]')?.value) || 0;
+        const avgCell = row.querySelector('.batting-average');
+        if (avgCell) {
+          avgCell.textContent = atBats > 0 ? (hits / atBats).toFixed(3) : '.000';
+        }
+        updateTeamBattingTotals(container);
+      }
+    }
+    
+    // Update team totals for other batting stats
+    if (e.target.classList.contains('stat-input')) {
+      updateTeamBattingTotals(container);
+    }
+  });
+
+  // Real-time ERA calculation
+  container.addEventListener('input', (e) => {
+    if (e.target.classList.contains('pitching-input') && e.target.dataset.field === 'innings' || 
+        e.target.classList.contains('pitching-input') && e.target.dataset.field === 'earnedRuns') {
+      const row = e.target.closest('tr');
+      if (row) {
+        const innings = parseFloat(row.querySelector('[data-field="innings"]')?.value) || 0;
+        const earnedRuns = parseInt(row.querySelector('[data-field="earnedRuns"]')?.value) || 0;
+        const eraCell = row.querySelector('.era');
+        if (eraCell) {
+          eraCell.textContent = innings > 0 ? (earnedRuns / innings * 9).toFixed(2) : '0.00';
+        }
+        updateTeamPitchingTotals(container);
+      }
+    }
+    
+    // Update team totals for other pitching stats
+    if (e.target.classList.contains('pitching-input')) {
+      updateTeamPitchingTotals(container);
+    }
+  });
+
+  // Player name update when selecting player
+  container.addEventListener('change', (e) => {
+    if (e.target.classList.contains('player-select')) {
+      const row = e.target.closest('tr');
+      if (row) {
+        const player = players.find(p => String(p.id) === e.target.value);
+        const nameCell = row.querySelector('.player-name');
+        if (nameCell) {
+          nameCell.textContent = player?.name || '';
+        }
+        // Update jersey cell to show just the number after selection
+        const jerseyCell = row.querySelector('.jersey-cell');
+        if (jerseyCell && player) {
+          // Replace the select with just the number display
+          jerseyCell.innerHTML = `
+            <span class="jersey-number">${player.number || player.jerseyNumber || ''}</span>
+            <button type="button" class="edit-jersey-btn" title="修改球員">✏️</button>
+            <select class="player-select" data-field="playerId" style="display: none;">
+              <option value="">選擇球員</option>
+              ${players.map(p => `<option value="${p.id}" ${String(p.id) === String(player.id) ? 'selected' : ''}>#${p.number} ${p.name}</option>`).join('')}
+            </select>
+          `;
+          
+          // Add edit button functionality
+          const editBtn = jerseyCell.querySelector('.edit-jersey-btn');
+          const select = jerseyCell.querySelector('.player-select');
+          const display = jerseyCell.querySelector('.jersey-number');
+          
+          if (editBtn && select && display) {
+            editBtn.addEventListener('click', () => {
+              display.style.display = 'none';
+              editBtn.style.display = 'none';
+              select.style.display = 'inline';
+              select.focus();
+            });
+            
+            select.addEventListener('change', (e) => {
+              const newPlayer = players.find(p => String(p.id) === e.target.value);
+              if (newPlayer) {
+                display.textContent = newPlayer.number || newPlayer.jerseyNumber || '';
+                nameCell.textContent = newPlayer.name || '';
+                display.style.display = 'inline';
+                editBtn.style.display = 'inline';
+                select.style.display = 'none';
+                
+                // Update select options
+                select.innerHTML = `
+                  <option value="">選擇球員</option>
+                  ${players.map(p => `<option value="${p.id}" ${String(p.id) === String(newPlayer.id) ? 'selected' : ''}>#${p.number} ${p.name}</option>`).join('')}
+                `;
+              }
+            });
+          }
+        }
+      }
+    }
+    
+    // Pitching selection - exclude already selected pitchers
+    if (e.target.classList.contains('pitcher-select')) {
+      const row = e.target.closest('tr');
+      if (row) {
+        const player = players.find(p => String(p.id) === e.target.value);
+        const numberCell = row.querySelector('.pitcher-number');
+        if (numberCell) {
+          numberCell.textContent = player?.number || '';
+        }
+        
+        // Update other pitcher selects to exclude this pitcher
+        updatePitcherSelects(container, players, e.target.value);
+      }
+    }
+  });
+
+  // Save score sheet
+  const saveBtn = container.querySelector('#saveScoreSheetBtn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', () => {
+      saveScoreSheet(container);
+    });
+  }
+
+  // Clear form
+  const clearBtn = container.querySelector('#clearScoreSheetBtn');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (confirm('確定要清空表單嗎？')) {
+        container.querySelector('#scoreSheetContent').innerHTML = renderScoreSheetForm(players);
+        setupScoreSheetHandlers(container, players);
+      }
+    });
+  }
+
+  // Add batting record button
+  const addBattingRecordBtn = container.querySelector('#addBattingRecordBtn');
+  if (addBattingRecordBtn) {
+    addBattingRecordBtn.addEventListener('click', () => {
+      const battingBody = container.querySelector('#battingRecordBody');
+      if (battingBody) {
+        const newRowIndex = battingBody.querySelectorAll('tr').length + 1;
+        const newRow = document.createElement('tr');
+        newRow.className = 'substitute-player-row';
+        newRow.innerHTML = `
+          <td>
+            <select class="identity-select" data-field="identity">
+              <option value="substitute-batting">代打</option>
+              <option value="substitute-running">代跑</option>
+              <option value="defensive-replacement">守備替換</option>
+              <option value="injury">受傷退場</option>
+            </select>
+          </td>
+          <td class="jersey-cell">
+            <select class="player-select" data-field="playerId">
+              <option value="">選擇球員</option>
+              ${players.map(p => `<option value="${p.id}">#${p.number} ${p.name}</option>`).join('')}
+            </select>
+          </td>
+          <td class="player-name"></td>
+          <td>
+            <select class="position-select" data-field="position">
+              <option value="">選擇守位</option>
+              <option value="P">投手</option>
+              <option value="C">捕手</option>
+              <option value="1B">一壘手</option>
+              <option value="2B">二壘手</option>
+              <option value="3B">三壘手</option>
+              <option value="SS">游擊手</option>
+              <option value="LF">左外野</option>
+              <option value="CF">中外野</option>
+              <option value="RF">右外野</option>
+              <option value="DH">指定打擊</option>
+            </select>
+          </td>
+          ${Array.from({length: 9}, (_, i) => `
+            <td><input type="text" class="inning-result-input" data-inning="${i + 1}" placeholder="輸入結果"></td>
+          `).join('')}
+          <td><input type="number" class="stat-input" data-field="atBats" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="runs" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="hits" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="rbi" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="walks" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="strikeouts" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="stolenBases" min="0" value="0"></td>
+          <td><input type="number" class="stat-input" data-field="errors" min="0" value="0"></td>
+          <td class="batting-average">.000</td>
+          <td>
+            <button type="button" class="btn-small remove-row-btn" data-action="remove">刪除</button>
+          </td>
+        `;
+        battingBody.appendChild(newRow);
+        
+        // Add event handlers for the new row
+        const select = newRow.querySelector('.player-select');
+        const nameCell = newRow.querySelector('.player-name');
+        const jerseyCell = newRow.querySelector('.jersey-cell');
+        
+        if (select && nameCell && jerseyCell) {
+          select.addEventListener('change', (e) => {
+            const player = players.find(p => String(p.id) === e.target.value);
+            if (player) {
+              nameCell.textContent = player?.name || '';
+              jerseyCell.innerHTML = `
+                <span class="jersey-number">${player.number || player.jerseyNumber || ''}</span>
+                <button type="button" class="edit-jersey-btn" title="修改球員">✏️</button>
+                <select class="player-select" data-field="playerId" style="display: none;">
+                  <option value="">選擇球員</option>
+                  ${players.map(p => `<option value="${p.id}" ${String(p.id) === String(player.id) ? 'selected' : ''}>#${p.number} ${p.name}</option>`).join('')}
+                </select>
+              `;
+              
+              const editBtn = jerseyCell.querySelector('.edit-jersey-btn');
+              const newSelect = jerseyCell.querySelector('.player-select');
+              const display = jerseyCell.querySelector('.jersey-number');
+              
+              if (editBtn && newSelect && display) {
+                editBtn.addEventListener('click', () => {
+                  display.style.display = 'none';
+                  editBtn.style.display = 'none';
+                  newSelect.style.display = 'inline';
+                  newSelect.focus();
+                });
+                
+                newSelect.addEventListener('change', (e) => {
+                  const newPlayer = players.find(p => String(p.id) === e.target.value);
+                  if (newPlayer) {
+                    display.textContent = newPlayer.number || newPlayer.jerseyNumber || '';
+                    nameCell.textContent = newPlayer.name || '';
+                    display.style.display = 'inline';
+                    editBtn.style.display = 'inline';
+                    newSelect.style.display = 'none';
+                    
+                    newSelect.innerHTML = `
+                      <option value="">選擇球員</option>
+                      ${players.map(p => `<option value="${p.id}" ${String(p.id) === String(newPlayer.id) ? 'selected' : ''}>#${p.number} ${p.name}</option>`).join('')}
+                    `;
+                  }
+                });
+              }
+            }
+          });
+        }
+        
+        // Add remove button handler
+        const removeBtn = newRow.querySelector('.remove-row-btn');
+        if (removeBtn) {
+          removeBtn.addEventListener('click', () => {
+            if (confirm('確定要刪除這個打擊記錄嗎？')) {
+              newRow.remove();
+              updateTeamBattingTotals(container);
+            }
+          });
+        }
+      }
+    });
+  }
+
+function updatePitcherSelects(container, players, selectedPitcherId) {
+  const allPitcherSelects = container.querySelectorAll('.pitcher-select');
+  const selectedPitcherIds = new Set();
+  
+  // Collect all selected pitcher IDs (including the current one)
+  allPitcherSelects.forEach(select => {
+    if (select.value) {
+      selectedPitcherIds.add(select.value);
+    }
+  });
+  
+  // Update each select to exclude already selected pitchers
+  allPitcherSelects.forEach(select => {
+    const currentValue = select.value;
+    const selectContainer = select.closest('td');
+    
+    // Rebuild the select options
+    select.innerHTML = `
+      <option value="">選擇投手</option>
+      ${players.filter(p => !selectedPitcherIds.has(String(p.id)) || String(p.id) === currentValue)
+        .map(p => `<option value="${p.id}" ${String(p.id) === currentValue ? 'selected' : ''}>${p.name}</option>`).join('')}
+    `;
+  });
+}
+
+function updateTeamBattingTotals(container) {
+  const battingRows = container.querySelectorAll('#battingRecordBody tr');
+  let totalAtBats = 0;
+  let totalRuns = 0;
+  let totalHits = 0;
+  let totalRBI = 0;
+  let totalWalks = 0;
+  let totalStrikeouts = 0;
+  let totalStolenBases = 0;
+  let totalErrors = 0;
+  
+  battingRows.forEach(row => {
+    totalAtBats += parseInt(row.querySelector('[data-field="atBats"]')?.value) || 0;
+    totalRuns += parseInt(row.querySelector('[data-field="runs"]')?.value) || 0;
+    totalHits += parseInt(row.querySelector('[data-field="hits"]')?.value) || 0;
+    totalRBI += parseInt(row.querySelector('[data-field="rbi"]')?.value) || 0;
+    totalWalks += parseInt(row.querySelector('[data-field="walks"]')?.value) || 0;
+    totalStrikeouts += parseInt(row.querySelector('[data-field="strikeouts"]')?.value) || 0;
+    totalStolenBases += parseInt(row.querySelector('[data-field="stolenBases"]')?.value) || 0;
+    totalErrors += parseInt(row.querySelector('[data-field="errors"]')?.value) || 0;
+  });
+  
+  const teamBattingAverage = totalAtBats > 0 ? (totalHits / totalAtBats).toFixed(3) : '.000';
+  
+  const teamTotalAtBats = container.querySelector('#teamTotalAtBats');
+  const teamTotalRuns = container.querySelector('#teamTotalRuns');
+  const teamTotalHits = container.querySelector('#teamTotalHits');
+  const teamTotalRBI = container.querySelector('#teamTotalRBI');
+  const teamTotalWalks = container.querySelector('#teamTotalWalks');
+  const teamTotalStrikeouts = container.querySelector('#teamTotalStrikeouts');
+  const teamTotalStolenBases = container.querySelector('#teamTotalStolenBases');
+  const teamTotalErrors = container.querySelector('#teamTotalErrors');
+  const teamBattingAverageCell = container.querySelector('#teamBattingAverage');
+  
+  if (teamTotalAtBats) teamTotalAtBats.textContent = totalAtBats;
+  if (teamTotalRuns) teamTotalRuns.textContent = totalRuns;
+  if (teamTotalHits) teamTotalHits.textContent = totalHits;
+  if (teamTotalRBI) teamTotalRBI.textContent = totalRBI;
+  if (teamTotalWalks) teamTotalWalks.textContent = totalWalks;
+  if (teamTotalStrikeouts) teamTotalStrikeouts.textContent = totalStrikeouts;
+  if (teamTotalStolenBases) teamTotalStolenBases.textContent = totalStolenBases;
+  if (teamTotalErrors) teamTotalErrors.textContent = totalErrors;
+  if (teamBattingAverageCell) teamBattingAverageCell.textContent = teamBattingAverage;
+}
+
+function updateTeamPitchingTotals(container) {
+  const pitchingRows = container.querySelectorAll('#pitchingRecordBody tr');
+  let totalInnings = 0;
+  let totalBattersFaced = 0;
+  let totalPitches = 0;
+  let totalHitsAllowed = 0;
+  let totalRunsAllowed = 0;
+  let totalEarnedRuns = 0;
+  let totalWalks = 0;
+  let totalStrikeouts = 0;
+  let totalHomeRuns = 0;
+  
+  pitchingRows.forEach(row => {
+    totalInnings += parseFloat(row.querySelector('[data-field="innings"]')?.value) || 0;
+    totalBattersFaced += parseInt(row.querySelector('[data-field="battersFaced"]')?.value) || 0;
+    totalPitches += parseInt(row.querySelector('[data-field="pitches"]')?.value) || 0;
+    totalHitsAllowed += parseInt(row.querySelector('[data-field="hitsAllowed"]')?.value) || 0;
+    totalRunsAllowed += parseInt(row.querySelector('[data-field="runsAllowed"]')?.value) || 0;
+    totalEarnedRuns += parseInt(row.querySelector('[data-field="earnedRuns"]')?.value) || 0;
+    totalWalks += parseInt(row.querySelector('[data-field="walks"]')?.value) || 0;
+    totalStrikeouts += parseInt(row.querySelector('[data-field="strikeouts"]')?.value) || 0;
+    totalHomeRuns += parseInt(row.querySelector('[data-field="homeRuns"]')?.value) || 0;
+  });
+  
+  const teamERA = totalInnings > 0 ? (totalEarnedRuns / totalInnings * 9).toFixed(2) : '0.00';
+  
+  const teamTotalInnings = container.querySelector('#teamTotalInnings');
+  const teamTotalBattersFaced = container.querySelector('#teamTotalBattersFaced');
+  const teamTotalPitches = container.querySelector('#teamTotalPitches');
+  const teamTotalHitsAllowed = container.querySelector('#teamTotalHitsAllowed');
+  const teamTotalRunsAllowed = container.querySelector('#teamTotalRunsAllowed');
+  const teamTotalEarnedRuns = container.querySelector('#teamTotalEarnedRuns');
+  const teamTotalPitchingWalks = container.querySelector('#teamTotalPitchingWalks');
+  const teamTotalPitchingStrikeouts = container.querySelector('#teamTotalPitchingStrikeouts');
+  const teamTotalHomeRuns = container.querySelector('#teamTotalHomeRuns');
+  const teamERACell = container.querySelector('#teamERA');
+  
+  if (teamTotalInnings) teamTotalInnings.textContent = totalInnings.toFixed(1);
+  if (teamTotalBattersFaced) teamTotalBattersFaced.textContent = totalBattersFaced;
+  if (teamTotalPitches) teamTotalPitches.textContent = totalPitches;
+  if (teamTotalHitsAllowed) teamTotalHitsAllowed.textContent = totalHitsAllowed;
+  if (teamTotalRunsAllowed) teamTotalRunsAllowed.textContent = totalRunsAllowed;
+  if (teamTotalEarnedRuns) teamTotalEarnedRuns.textContent = totalEarnedRuns;
+  if (teamTotalPitchingWalks) teamTotalPitchingWalks.textContent = totalWalks;
+  if (teamTotalPitchingStrikeouts) teamTotalPitchingStrikeouts.textContent = totalStrikeouts;
+  if (teamTotalHomeRuns) teamTotalHomeRuns.textContent = totalHomeRuns;
+  if (teamERACell) teamERACell.textContent = teamERA;
+}
+
+function saveScoreSheet(container) {
+  try {
+    const data = loadData();
+    
+    // Basic game info
+    const gameInfo = {
+      teamName: container.querySelector('#teamName')?.value || '',
+      opponent: container.querySelector('#opponent')?.value || '',
+      gameDate: container.querySelector('#gameDate')?.value || '',
+      venue: container.querySelector('#venue')?.value || '',
+      gameName: container.querySelector('#gameName')?.value || '',
+      homeAway: container.querySelector('#homeAway')?.value || 'home'
+    };
+
+    // Inning records
+    const inningRows = container.querySelectorAll('.inning-table tbody tr');
+    const inningRecords = [];
+    inningRows.forEach(row => {
+      const inputs = row.querySelectorAll('.inning-input');
+      const values = Array.from(inputs).map(input => parseInt(input.value) || 0);
+      inningRecords.push(values);
+    });
+
+    // Batting records
+    const battingRows = container.querySelectorAll('#battingRecordBody tr');
+    const battingRecords = [];
+    battingRows.forEach(row => {
+      const playerId = row.querySelector('.player-select')?.value || '';
+      const identity = row.querySelector('.identity-select')?.value || 'starter';
+      const position = row.querySelector('.position-select')?.value || '';
+      
+      const statInputs = row.querySelectorAll('.stat-input');
+      const inningResults = Array.from(row.querySelectorAll('.inning-result-input')).map(input => input.value || '');
+      
+      battingRecords.push({
+        playerId,
+        identity,
+        position,
+        atBats: parseInt(row.querySelector('[data-field="atBats"]')?.value) || 0,
+        runs: parseInt(row.querySelector('[data-field="runs"]')?.value) || 0,
+        hits: parseInt(row.querySelector('[data-field="hits"]')?.value) || 0,
+        rbi: parseInt(row.querySelector('[data-field="rbi"]')?.value) || 0,
+        walks: parseInt(row.querySelector('[data-field="walks"]')?.value) || 0,
+        strikeouts: parseInt(row.querySelector('[data-field="strikeouts"]')?.value) || 0,
+        stolenBases: parseInt(row.querySelector('[data-field="stolenBases"]')?.value) || 0,
+        errors: parseInt(row.querySelector('[data-field="errors"]')?.value) || 0,
+        inningResults
+      });
+    });
+
+    // Pitching records
+    const pitchingRows = container.querySelectorAll('#pitchingRecordBody tr');
+    const pitchingRecords = [];
+    pitchingRows.forEach(row => {
+      const playerId = row.querySelector('.pitcher-select')?.value || '';
+      const pitcherType = row.dataset.pitcherType || 'starter';
+      
+      pitchingRecords.push({
+        playerId,
+        pitcherType,
+        innings: parseFloat(row.querySelector('[data-field="innings"]')?.value) || 0,
+        battersFaced: parseInt(row.querySelector('[data-field="battersFaced"]')?.value) || 0,
+        pitches: parseInt(row.querySelector('[data-field="pitches"]')?.value) || 0,
+        hitsAllowed: parseInt(row.querySelector('[data-field="hitsAllowed"]')?.value) || 0,
+        runsAllowed: parseInt(row.querySelector('[data-field="runsAllowed"]')?.value) || 0,
+        earnedRuns: parseInt(row.querySelector('[data-field="earnedRuns"]')?.value) || 0,
+        walks: parseInt(row.querySelector('[data-field="walks"]')?.value) || 0,
+        strikeouts: parseInt(row.querySelector('[data-field="strikeouts"]')?.value) || 0,
+        homeRuns: parseInt(row.querySelector('[data-field="homeRuns"]')?.value) || 0
+      });
+    });
+
+    const scoreSheet = {
+      gameInfo,
+      inningRecords,
+      battingRecords,
+      pitchingRecords,
+      createdAt: new Date().toISOString()
+    };
+
+    // Save to data
+    if (!Array.isArray(data.scoreSheets)) {
+      data.scoreSheets = [];
+    }
+    data.scoreSheets.push(scoreSheet);
+    saveData(data);
+
+    alert('比賽紀錄已儲存！');
+    
+    // Optionally sync to player stats
+    syncToPlayerStats(scoreSheet, data);
+    saveData(data);
+    
+  } catch (error) {
+    console.error('儲存比賽紀錄失敗：', error);
+    alert('儲存比賽紀錄失敗，請稍後再試');
+  }
+}
+
+function syncToPlayerStats(scoreSheet, data) {
+  if (!Array.isArray(data.players)) return;
+  
+  scoreSheet.battingRecords.forEach(record => {
+    if (!record.playerId) return;
+    
+    const player = data.players.find(p => String(p.id) === String(record.playerId));
+    if (!player) return;
+    
+    if (!player.stats) {
+      player.stats = {};
+    }
+    
+    // Accumulate stats
+    player.stats.atBats = (player.stats.atBats || 0) + record.atBats;
+    player.stats.hits = (player.stats.hits || 0) + record.hits;
+    player.stats.rbi = (player.stats.rbi || 0) + record.rbi;
+    player.stats.runs = (player.stats.runs || 0) + record.runs;
+    player.stats.walks = (player.stats.walks || 0) + record.walks;
+    player.stats.strikeouts = (player.stats.strikeouts || 0) + record.strikeouts;
+    player.stats.stolenBases = (player.stats.stolenBases || 0) + record.stolenBases;
+    
+    // Update batting average
+    if (player.stats.atBats > 0) {
+      player.stats.battingAverage = (player.stats.hits / player.stats.atBats).toFixed(3);
+    }
+  });
+  
+  scoreSheet.pitchingRecords.forEach(record => {
+    if (!record.playerId) return;
+    
+    const player = data.players.find(p => String(p.id) === String(record.playerId));
+    if (!player) return;
+    
+    if (!player.pitchingStats) {
+      player.pitchingStats = {};
+    }
+    
+    // Accumulate pitching stats
+    player.pitchingStats.innings = (player.pitchingStats.innings || 0) + record.innings;
+    player.pitchingStats.pitches = (player.pitchingStats.pitches || 0) + record.pitches;
+    player.pitchingStats.hitsAllowed = (player.pitchingStats.hitsAllowed || 0) + record.hitsAllowed;
+    player.pitchingStats.runsAllowed = (player.pitchingStats.runsAllowed || 0) + record.runsAllowed;
+    player.pitchingStats.earnedRuns = (player.pitchingStats.earnedRuns || 0) + record.earnedRuns;
+    player.pitchingStats.walks = (player.pitchingStats.walks || 0) + record.walks;
+    player.pitchingStats.strikeouts = (player.pitchingStats.strikeouts || 0) + record.strikeouts;
+    player.pitchingStats.homeRuns = (player.pitchingStats.homeRuns || 0) + record.homeRuns;
+    
+    // Update ERA
+    if (player.pitchingStats.innings > 0) {
+      player.pitchingStats.era = (player.pitchingStats.earnedRuns / player.pitchingStats.innings * 9).toFixed(2);
+    }
+  });
+}

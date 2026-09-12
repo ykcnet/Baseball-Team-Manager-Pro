@@ -1,9 +1,26 @@
 .app-layout {
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 250px minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
   min-height: 100vh;
 }
 
+#header {
+  grid-column: 1 / -1;
+}
+
+#sidebar {
+  grid-column: 1;
+}
+
 .content {
-  padding: 20px;
+  grid-column: 2;
+  min-width: 0;
+  padding: 36px clamp(24px, 4vw, 64px);
+}
+
+@media (max-width: 760px) {
+  .app-layout { grid-template-columns: 1fr; }
+  #sidebar { grid-column: 1; }
+  .content { grid-column: 1; padding: 24px 18px 36px; }
 }

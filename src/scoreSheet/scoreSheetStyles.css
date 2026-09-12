@@ -1,0 +1,720 @@
+.score-sheet-page {
+  padding: 20px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.score-sheet-page-header {
+  margin-bottom: 18px;
+  padding: 24px 28px;
+  border: 1px solid #e0e7f0;
+  border-left: 5px solid #3377db;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(24, 49, 85, .06);
+}
+
+.score-sheet-page-header h2 {
+  margin: 0;
+  color: #192a45;
+  font-size: 25px;
+}
+
+.score-sheet-page-header p {
+  margin: 7px 0 0;
+  color: #72819a;
+  font-size: 14px;
+}
+
+.score-sheet-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.score-sheet-linked-notice {
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border: 1px solid #bcd7ff;
+  border-radius: 10px;
+  color: #1e4d8f;
+  font-size: 13px;
+  background: #eef5ff;
+}
+
+.score-sheet-history-empty {
+  padding: 40px 20px;
+  color: #72819a;
+  text-align: center;
+}
+
+.score-sheet-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.score-sheet-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border: 1px solid #e0e7f0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.score-sheet-history-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.score-sheet-history-info strong {
+  color: #1e3151;
+}
+
+.score-sheet-history-info span {
+  color: #72819a;
+  font-size: 13px;
+}
+
+.score-sheet-draft-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: #8b6416;
+  font-size: 11px;
+  background: #fff8df;
+}
+
+.score-sheet-history-note {
+  flex-shrink: 0;
+  max-width: 220px;
+  color: #72819a;
+  font-size: 12px;
+  text-align: right;
+}
+
+.score-sheet-history-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.score-sheet-history-actions .btn-danger {
+  padding: 8px 14px;
+  border: 1px solid #f3c2c2;
+  border-radius: 8px;
+  color: #b3261e;
+  font-size: 13px;
+  font-weight: 600;
+  background: #fdeeee;
+  cursor: pointer;
+}
+
+.score-sheet-history-actions .btn-danger:hover {
+  background: #fadede;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .16s ease;
+  color: #fff;
+  background: #2f74ce;
+}
+
+.btn-primary:hover {
+  background: #2768c3;
+}
+
+.btn-secondary {
+  padding: 10px 20px;
+  border: 1px solid #c9d4e4;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .16s ease;
+  color: #53627a;
+  background: #fff;
+}
+
+.btn-secondary:hover {
+  background: #f8fafc;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  border: 1px solid #c9d4e4;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .16s ease;
+  color: #53627a;
+  background: #fff;
+}
+
+.btn-small:hover {
+  background: #f8fafc;
+}
+
+.score-sheet-form {
+  background: #fff;
+  border: 1px solid #e0e7f0;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.score-sheet-form h3 {
+  margin: 0 0 16px;
+  color: #1e3151;
+  font-size: 18px;
+  border-bottom: 2px solid #e9eef5;
+  padding-bottom: 8px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field label {
+  color: #43516a;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form-field input,
+.form-field select {
+  padding: 10px 12px;
+  border: 1px solid #ccd8e8;
+  border-radius: 8px;
+  color: #26344d;
+  background: #fff;
+  font-size: 14px;
+}
+
+.inning-section,
+.batting-section,
+.pitching-section {
+  margin-bottom: 32px;
+}
+
+.lineup-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.lineup-selector label {
+  color: #43516a;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.lineup-selector select {
+  padding: 6px 10px;
+  border: 1px solid #ccd8e8;
+  border-radius: 6px;
+  color: #26344d;
+  background: #fff;
+  font-size: 13px;
+}
+
+.inning-table,
+.batting-table,
+.pitching-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.inning-table th,
+.batting-table th,
+.pitching-table th {
+  padding: 6px 4px;
+  background: #f8fafc;
+  border: 1px solid #e0e7f0;
+  color: #43516a;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  min-width: 40px;
+  font-size: 11px;
+}
+
+.inning-table td,
+.batting-table td,
+.pitching-table td {
+  padding: 4px 2px;
+  border: 1px solid #e0e7f0;
+  text-align: center;
+  min-width: 40px;
+  font-size: 11px;
+}
+
+.inning-table input,
+.batting-table input,
+.pitching-table input {
+  width: 100%;
+  padding: 2px 4px;
+  border: 1px solid #ccd8e8;
+  border-radius: 4px;
+  color: #26344d;
+  background: #fff;
+  font-size: 11px;
+  text-align: center;
+  min-width: 25px;
+}
+
+.batting-table select,
+.pitching-table select {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #ccd8e8;
+  border-radius: 4px;
+  color: #26344d;
+  background: #fff;
+  font-size: 11px;
+  min-width: 50px;
+  max-width: 100px;
+  cursor: pointer;
+}
+
+.batting-table select option,
+.pitching-table select option {
+  padding: 4px 6px;
+  color: #26344d;
+  background: #fff;
+  font-size: 11px;
+}
+
+/* Specific column widths for better visibility */
+.batting-table td:nth-child(3), /* 背號 column */
+.batting-table td:nth-child(4), /* 姓名 column */
+.batting-table td:nth-child(5)  /* 守位 column */
+{
+  min-width: 50px;
+}
+
+/* Pitching table column widths */
+.pitching-table th:nth-child(1), /* 順序 */
+.pitching-table td:nth-child(1) {
+  width: 50px;
+  min-width: 50px;
+}
+
+.pitching-table th:nth-child(2), /* 姓名 */
+.pitching-table td:nth-child(2) {
+  width: 60px;
+  min-width: 60px;
+}
+
+.pitching-table th:nth-child(3), /* 背號 */
+.pitching-table td:nth-child(3) {
+  width: 40px;
+  min-width: 40px;
+}
+
+.pitching-table th:nth-child(n+4), /* 統計欄位 */
+.pitching-table td:nth-child(n+4) {
+  width: 35px;
+  min-width: 35px;
+}
+
+/* Ensure batting table columns have proper widths */
+.batting-table th:nth-child(1), /* 棒次 */
+.batting-table td:nth-child(1) {
+  width: 30px;
+  min-width: 30px;
+}
+
+.batting-table th:nth-child(2), /* 身分 */
+.batting-table td:nth-child(2) {
+  width: 70px;
+  min-width: 70px;
+}
+
+.batting-table th:nth-child(3), /* 背號 */
+.batting-table td:nth-child(3) {
+  width: 50px;
+  min-width: 50px;
+}
+
+.batting-table th:nth-child(4), /* 姓名 */
+.batting-table td:nth-child(4) {
+  width: 60px;
+  min-width: 60px;
+}
+
+.batting-table th:nth-child(5), /* 守位 */
+.batting-table td:nth-child(5) {
+  width: 60px;
+  min-width: 60px;
+}
+
+/* Inning columns */
+.batting-table th:nth-child(n+6):nth-child(-n+14),
+.batting-table td:nth-child(n+6):nth-child(-n+14) {
+  width: 30px;
+  min-width: 30px;
+}
+
+/* Stat columns */
+.batting-table th:nth-child(n+15),
+.batting-table td:nth-child(n+15) {
+  width: 30px;
+  min-width: 30px;
+}
+
+/* Team total row should span properly */
+.team-total-row td {
+  white-space: nowrap;
+}
+
+.pitching-table td:nth-child(2), /* 姓名 column */
+.pitching-table td:nth-child(3)  /* 背號 column */
+{
+  min-width: 80px;
+}
+
+/* Make the table scrollable horizontally on small screens */
+.batting-table,
+.pitching-table {
+  min-width: auto;
+  table-layout: auto;
+  width: 100%;
+}
+
+/* Ensure table containers are scrollable on mobile */
+@media (max-width: 768px) {
+  .batting-section,
+  .pitching-section {
+    overflow-x: auto;
+    width: 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  .batting-section,
+  .pitching-section {
+    overflow-x: visible;
+  }
+}
+
+/* Jersey number display styling */
+.jersey-number {
+  font-weight: 600;
+  color: #1e3151;
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.edit-jersey-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  color: #74829a;
+  transition: .16s ease;
+}
+
+.edit-jersey-btn:hover {
+  background: #f8fafc;
+  color: #2f74ce;
+}
+
+.jersey-cell {
+  min-width: 60px;
+  text-align: center;
+}
+
+.coach-substitution-section {
+  background: #f8fafc;
+  border: 1px solid #e0e7f0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.coach-substitution-section h4 {
+  margin: 0 0 12px 0;
+  color: #43516a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.coach-substitution-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.coach-substitution-form .form-field {
+  flex: 1;
+  min-width: 120px;
+}
+
+.coach-substitution-form .form-field label {
+  display: block;
+  margin-bottom: 4px;
+  color: #43516a;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.coach-substitution-form .form-field input,
+.coach-substitution-form .form-field select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #ccd8e8;
+  border-radius: 4px;
+  color: #26344d;
+  background: #fff;
+  font-size: 13px;
+}
+
+.coach-substitution-form button {
+  padding: 8px 16px;
+  background: #2f74ce;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.coach-substitution-form button:hover {
+  background: #2568b8;
+}
+
+.position-code-legend {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #e0e7f0;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #43516a;
+}
+
+.position-code-legend p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Substitute player row styling */
+.substitute-player-row {
+  background: #fafbfc;
+}
+
+.add-substitute-btn {
+  padding: 4px 8px;
+  border: 1px solid #2f74ce;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  color: #2f74ce;
+  background: #fff;
+}
+
+.add-substitute-btn:hover {
+  background: #f0f7ff;
+}
+
+.remove-row-btn {
+  padding: 4px 8px;
+  border: 1px solid #f0c9d0;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  color: #b24252;
+  background: #fff7f8;
+}
+
+.remove-row-btn:hover {
+  background: #ffecef;
+}
+
+.remove-pitcher-btn {
+  padding: 4px 8px;
+  border: 1px solid #f0c9d0;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  color: #b24252;
+  background: #fff7f8;
+}
+
+.remove-pitcher-btn:hover {
+  background: #ffecef;
+}
+
+.batting-average,
+.era {
+  font-weight: 600;
+  color: #1e3151;
+}
+
+.team-total-row {
+  background: #f8fafc;
+  font-weight: 600;
+}
+
+.team-total-row td {
+  border-top: 2px solid #e0e7f0;
+  color: #1e3151;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e9eef5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .score-sheet-page {
+    padding: 16px;
+  }
+  
+  .score-sheet-page .page-intro {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .score-sheet-actions {
+    flex-direction: column;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .score-sheet-form {
+    overflow-x: auto;
+  }
+  
+  .batting-table,
+  .pitching-table {
+    min-width: 1200px;
+    table-layout: fixed;
+  }
+  
+  .inning-table,
+  .batting-table,
+  .pitching-table {
+    font-size: 10px;
+  }
+  
+  .inning-table th,
+  .batting-table th,
+  .pitching-table th,
+  .inning-table td,
+  .batting-table td,
+  .pitching-table td {
+    padding: 3px 2px;
+    min-width: 30px;
+  }
+  
+  .inning-table input,
+  .batting-table input,
+  .pitching-table input {
+    font-size: 10px;
+    padding: 2px 3px;
+  }
+  
+  .batting-table select,
+  .pitching-table select {
+    font-size: 10px;
+    padding: 3px 4px;
+    min-width: 40px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .batting-table,
+  .pitching-table {
+    min-width: auto;
+    table-layout: auto;
+  }
+  
+  .inning-table th,
+  .batting-table th,
+  .pitching-table th,
+  .inning-table td,
+  .batting-table td,
+  .pitching-table td {
+    font-size: 11px;
+    padding: 4px 3px;
+  }
+  
+  .inning-table input,
+  .batting-table input,
+  .pitching-table input {
+    font-size: 11px;
+    padding: 3px 4px;
+  }
+  
+  .batting-table select,
+  .pitching-table select {
+    font-size: 11px;
+    padding: 4px 6px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .batting-table,
+  .pitching-table {
+    min-width: auto;
+    table-layout: auto;
+  }
+  
+  .inning-table th,
+  .batting-table th,
+  .pitching-table th,
+  .inning-table td,
+  .batting-table td,
+  .pitching-table td {
+    font-size: 12px;
+    padding: 6px 4px;
+  }
+  
+  .inning-table input,
+  .batting-table input,
+  .pitching-table input {
+    font-size: 12px;
+    padding: 4px 6px;
+  }
+  
+  .batting-table select,
+  .pitching-table select {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+}

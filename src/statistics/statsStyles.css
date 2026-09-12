@@ -1,0 +1,428 @@
+.stats-page {
+  max-width: 1050px;
+}
+
+.stats-page .page-intro {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 205px;
+  padding: 34px 40px;
+  border-radius: 18px;
+  color: #fff;
+  background: linear-gradient(115deg, #1c3566, #2f69ae);
+  box-shadow: 0 15px 35px rgba(41, 82, 139, .22);
+}
+
+.stats-page .page-intro::after {
+  content: '';
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: -75px;
+  bottom: -150px;
+  border: 45px solid rgba(255,255,255,.08);
+  border-radius: 50%;
+}
+
+.stats-page .dashboard-ball {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  margin-right: 20px;
+  border-radius: 50%;
+  font-size: 49px;
+  background: rgba(255,255,255,.13);
+  transform: rotate(-12deg);
+}
+
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 24px;
+}
+
+.stats-header-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 16px 0;
+}
+
+.btn-danger {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .16s ease;
+  color: #fff;
+  background: #d1495b;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+.stat-card {
+  padding: 20px;
+  border: 1px solid #e0e7f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(24,49,85,.06);
+  text-align: center;
+}
+
+.stat-value {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 42px;
+  font-weight: 800;
+  color: #1e3151;
+  line-height: 1;
+}
+
+.stat-label {
+  margin-top: 8px;
+  color: #72819a;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.stats-tabs {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.stats-tab {
+  padding: 12px 20px;
+  border: 1px solid #e0e7f0;
+  border-radius: 8px;
+  color: #43516a;
+  font-weight: 700;
+  background: #fff;
+  cursor: pointer;
+  transition: .16s ease;
+}
+
+.stats-tab:hover {
+  border-color: #b9cdf0;
+  background: #f4f8ff;
+}
+
+.stats-tab.active {
+  border-color: #2768c3;
+  color: #fff;
+  background: #2f74ce;
+}
+
+.stats-content {
+  display: none;
+  margin-top: 18px;
+}
+
+.stats-content.active {
+  display: block;
+}
+
+.stats-table-container {
+  border: 1px solid #e0e7f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(24,49,85,.06);
+  overflow: hidden;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stats-table th {
+  padding: 14px 16px;
+  text-align: left;
+  color: #43516a;
+  font-size: 13px;
+  font-weight: 700;
+  background: #f8fafc;
+  border-bottom: 1px solid #e9eef5;
+}
+
+.stats-table td {
+  padding: 12px 16px;
+  color: #28354b;
+  font-size: 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.stats-edit-btn, .stats-delete-btn {
+  padding: 6px 12px;
+  border: 1px solid #e0e7f0;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: .16s ease;
+}
+
+.stats-edit-btn {
+  color: #2866bd;
+  background: #f4f8ff;
+}
+
+.stats-edit-btn:hover {
+  border-color: #2768c3;
+  background: #e8f0ff;
+}
+
+.stats-delete-btn {
+  color: #d1495b;
+  background: #fff0f1;
+}
+
+.stats-delete-btn:hover {
+  border-color: #c0392b;
+  background: #ffe5e6;
+}
+
+.stats-table tr:last-child td {
+  border-bottom: none;
+}
+
+.stats-table tr:hover {
+  background: #f8fafc;
+}
+
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: #74829a;
+  font-size: 14px;
+  background: #fff;
+  border: 1px solid #e0e7f0;
+  border-radius: 14px;
+}
+
+@media (max-width: 600px) {
+  .stats-summary {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-tabs {
+    flex-direction: column;
+  }
+  
+  .stats-table-container {
+    overflow-x: auto;
+  }
+  
+  .stats-table {
+    min-width: 600px;
+  }
+}
+
+/* Game Record Styles */
+
+.game-record-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.game-info-section,
+.batting-record-section,
+.pitching-record-section,
+.inning-record-section {
+  background: #fff;
+  border: 1px solid #e0e7f0;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(24,49,85,.06);
+}
+
+.game-info-section h3,
+.batting-record-section h3,
+.pitching-record-section h3,
+.inning-record-section h3 {
+  margin: 0 0 16px 0;
+  color: #1e3151;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.game-info-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  color: #43516a;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form-input {
+  padding: 10px 12px;
+  border: 1px solid #e0e7f0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #28354b;
+  background: #fff;
+  transition: .16s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #2768c3;
+  box-shadow: 0 0 0 3px rgba(39,104,195,.1);
+}
+
+.game-record-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.game-record-table th {
+  padding: 8px 6px;
+  text-align: center;
+  color: #43516a;
+  font-weight: 700;
+  background: #f8fafc;
+  border: 1px solid #e9eef5;
+  font-size: 11px;
+}
+
+.game-record-table td {
+  padding: 6px 4px;
+  text-align: center;
+  border: 1px solid #f1f5f9;
+  font-size: 12px;
+}
+
+.game-record-table input,
+.game-record-table select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #e0e7f0;
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.game-record-table input:focus,
+.game-record-table select:focus {
+  outline: none;
+  border-color: #2768c3;
+}
+
+.stat-input {
+  width: 50px !important;
+}
+
+.inning-input {
+  width: 40px !important;
+  font-size: 11px !important;
+}
+
+.batting-average,
+.era {
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 700;
+  color: #2768c3;
+}
+
+.batting-table-container,
+.pitching-table-container,
+.inning-table-container {
+  overflow-x: auto;
+}
+
+.game-record-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-small {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .16s ease;
+}
+
+.btn-primary {
+  color: #fff;
+  background: #2768c3;
+}
+
+.btn-primary:hover {
+  background: #1e5aa8;
+}
+
+.btn-secondary {
+  color: #43516a;
+  background: #f8fafc;
+  border: 1px solid #e0e7f0;
+}
+
+.btn-secondary:hover {
+  background: #e8f0ff;
+  border-color: #2768c3;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 12px;
+  background: #fff0f1;
+  color: #d1495b;
+  border: 1px solid #e0e7f0;
+}
+
+.btn-small:hover {
+  background: #ffe5e6;
+  border-color: #c0392b;
+}
+
+.replacement-select {
+  width: 80px !important;
+}
+
+.position-select {
+  width: 70px !important;
+}
+
+.pitcher-type-select {
+  width: 60px !important;
+}
+
+.relief-inning-select {
+  width: 70px !important;
+}
+
+.empty-message {
+  padding: 20px;
+  text-align: center;
+  color: #74829a;
+  font-size: 14px;
+  background: #f8fafc;
+}

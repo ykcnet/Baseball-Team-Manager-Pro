@@ -9,10 +9,6 @@ export const MENU_ITEMS = [
   },
   {
     id: 'game',
-    name: 'Game Day'
-  },
-  {
-    id: 'report',
-    name: '報表'
+    name: '比賽紀錄查詢'
   }
 ];

@@ -14,7 +14,7 @@ export function startApp() {
     <div class="app-layout">
       <header id="header"></header>
       <aside id="sidebar"></aside>
-      <main id="dashboard" class="content"></main>
+      <main id="dashboard" class="content" tabindex="-1"></main>
     </div>
   `;
 

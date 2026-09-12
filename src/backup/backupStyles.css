@@ -1,0 +1,114 @@
+.backup-page {
+  max-width: 1050px;
+}
+
+.backup-page .page-intro {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 205px;
+  padding: 34px 40px;
+  border-radius: 18px;
+  color: #fff;
+  background: linear-gradient(115deg, #1c3566, #2f69ae);
+  box-shadow: 0 15px 35px rgba(41, 82, 139, .22);
+  margin-bottom: 24px;
+}
+
+.backup-page .page-intro::after {
+  content: '';
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  right: -75px;
+  bottom: -150px;
+  border: 45px solid rgba(255,255,255,.08);
+  border-radius: 50%;
+}
+
+.backup-page .dashboard-ball {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  margin-right: 20px;
+  border-radius: 50%;
+  font-size: 49px;
+  background: rgba(255,255,255,.13);
+  transform: rotate(-12deg);
+}
+
+.backup-panel {
+  padding: 22px;
+  border: 1px solid #e0e7f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(24,49,85,.06);
+}
+
+.backup-panel-header h3 {
+  margin: 0;
+  color: #1e3151;
+}
+
+.backup-panel-header > div > p:last-child {
+  margin: 5px 0 0;
+  color: #74829a;
+  font-size: 13px;
+}
+
+.backup-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.backup-actions button {
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.backup-export-btn {
+  border: 1px solid #b9cdf0;
+  color: #2866bd;
+  background: #f4f8ff;
+}
+
+.backup-import-btn {
+  border: 1px solid #2768c3;
+  color: #fff;
+  background: #2f74ce;
+}
+
+.backup-note {
+  margin: 14px 0 0;
+  color: #74829a;
+  font-size: 12px;
+}
+
+.backup-message:not(:empty) {
+  margin-top: 14px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.backup-message.success {
+  color: #177657;
+  background: #e9faf3;
+}
+
+.backup-message.warning {
+  color: #8b6416;
+  background: #fff8df;
+}
+
+.backup-message.error {
+  color: #9d2736;
+  background: #fff0f1;
+}

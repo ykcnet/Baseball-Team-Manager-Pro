@@ -1,0 +1,176 @@
+.record-query-page {
+  padding: 20px;
+  max-width: 1050px;
+  margin: 0 auto;
+}
+
+.record-query-header {
+  margin-bottom: 18px;
+  padding: 24px 28px;
+  border: 1px solid #e0e7f0;
+  border-left: 5px solid #3377db;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(24, 49, 85, .06);
+}
+
+.record-query-header h2 {
+  margin: 0;
+  color: #192a45;
+  font-size: 25px;
+}
+
+.record-query-header p {
+  margin: 7px 0 0;
+  color: #72819a;
+  font-size: 14px;
+}
+
+.record-query-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.record-query-tab {
+  padding: 10px 18px;
+  border: 1px solid #d7e2f2;
+  border-radius: 999px;
+  color: #4a5b7a;
+  font-size: 14px;
+  font-weight: 600;
+  background: #fff;
+  cursor: pointer;
+}
+
+.record-query-tab.active {
+  color: #fff;
+  border-color: #3377db;
+  background: #3377db;
+}
+
+.record-query-panel {
+  display: none;
+}
+
+.record-query-panel.active {
+  display: block;
+}
+
+.record-query-empty,
+.record-query-empty-inline {
+  padding: 24px;
+  color: #72819a;
+  text-align: center;
+}
+
+.record-query-empty-inline {
+  padding: 12px 0;
+}
+
+.record-query-game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.record-query-game-item {
+  border: 1px solid #e0e7f0;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.record-query-game-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+}
+
+.record-query-result {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  color: #72819a;
+  font-weight: 800;
+  background: #eef2f8;
+}
+
+.record-query-result.win { color: #177657; background: #e9faf3; }
+.record-query-result.loss { color: #9d2736; background: #fff0f1; }
+.record-query-result.tie { color: #8b6416; background: #fff8df; }
+
+.record-query-game-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.record-query-game-info strong {
+  color: #1e3151;
+}
+
+.record-query-game-info span {
+  color: #72819a;
+  font-size: 13px;
+}
+
+.record-query-game-score {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e3151;
+}
+
+.record-query-game-detail {
+  padding: 0 18px 18px;
+  border-top: 1px solid #eef2f8;
+}
+
+.record-query-table {
+  width: 100%;
+  margin-top: 12px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.record-query-table th,
+.record-query-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #eef2f8;
+  text-align: center;
+}
+
+.record-query-table th {
+  color: #72819a;
+  font-weight: 700;
+  background: #f8fafd;
+}
+
+.record-query-search {
+  margin-bottom: 16px;
+}
+
+.record-query-search input {
+  width: 100%;
+  max-width: 320px;
+  padding: 10px 14px;
+  border: 1px solid #ccd8e8;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.record-query-page h3 {
+  margin: 20px 0 4px;
+  color: #1e3151;
+  font-size: 16px;
+}
+
+.record-query-page h3:first-child {
+  margin-top: 0;
+}
