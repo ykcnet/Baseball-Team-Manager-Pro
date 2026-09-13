@@ -6,7 +6,7 @@ import { loadData } from '../core/storage.js';
 // 純查詢頁面：瀏覽歷史比賽結果（含每場的打擊/投手明細），
 // 以及球員累積的打擊/投手數據。資料來源：
 // - data.scoreSheets（每筆代表一場比賽的完整紀錄表）
-// - data.players[].stats / pitchingStats（存比賽紀錄表時累加的數據）
+// - data.players[].stats / pitchingStats（存比賽紀錄時累加的數據）
 // ============================================================
 
 export function renderRecordQueryPage(container) {
@@ -75,7 +75,7 @@ function renderGamesPanel(el, scoreSheets, players) {
   if (!el) return;
 
   if (scoreSheets.length === 0) {
-    el.innerHTML = '<div class="record-query-empty">目前還沒有任何比賽紀錄，先到「比賽紀錄表」建立第一場吧。</div>';
+    el.innerHTML = '<div class="record-query-empty">目前還沒有任何比賽紀錄，先到「比賽紀錄」建立第一場吧。</div>';
     return;
   }
 

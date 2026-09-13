@@ -12,8 +12,8 @@ export function renderScoreSheetPage(container) {
       <div class="page-intro">
         <div>
           <p class="eyebrow">SCORE SHEET</p>
-          <h2>比賽紀錄表</h2>
-          <p>建立完整的比賽紀錄表，包含打擊、投手和局數統計</p>
+          <h2>比賽紀錄</h2>
+          <p>建立完整的比賽紀錄，包含打擊、投手和局數統計</p>
         </div>
         <div class="dashboard-ball" aria-hidden="true">📋</div>
       </div>

@@ -78,7 +78,7 @@ export function restoreTeamBackup(rawText) {  let backup;
     players: validCollection(backup.data.players, '球員名單'),
     lineups: validCollection(backup.data.lineups, '先發名單'),
     games: validCollection(backup.data.games, '比賽資料'),
-    scoreSheets: validCollection(backup.data.scoreSheets ?? [], '比賽紀錄表')
+    scoreSheets: validCollection(backup.data.scoreSheets ?? [], '比賽紀錄')
   };
   const gameEvents = validCollection(backup.data.gameEvents ?? [], '比賽事件');
 
@@ -93,7 +93,7 @@ export function restoreTeamBackup(rawText) {  let backup;
   };
 }
 
-// 清除所有球隊資料（球員、先發名單、比賽、比賽紀錄表、比賽事件）。
+// 清除所有球隊資料（球員、先發名單、比賽、比賽紀錄、比賽事件）。
 // 用於：發佈/交機給別人使用前，把自己測試用的資料清乾淨。
 // 這個動作只會清掉「這台裝置、這個瀏覽器」的資料，不影響其他裝置。
 export function clearAllTeamData() {
