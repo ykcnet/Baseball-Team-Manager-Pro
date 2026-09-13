@@ -1,72 +1,15 @@
 {
   "name": "baseball-team-manager-pro",
   "private": true,
-  "version": "5.2.0",
+  "version": "1.0.0",
   "type": "module",
-  "main": "electron-main.cjs",
-    "scripts": {
+  "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "build:web": "vite build --base=/Baseball-Team-Manager-Pro/",
-    "build:exe": "vite build --base=./"
+    "preview": "vite preview"
   },
+  "dependencies": {},
   "devDependencies": {
-    "@electron-forge/cli": "^7.6.1",
-    "@electron-forge/maker-deb": "^7.6.1",
-    "@electron-forge/maker-rpm": "^7.6.1",
-    "@electron-forge/maker-squirrel": "^7.6.1",
-    "@electron-forge/maker-zip": "^7.6.1",
-    "@electron-forge/plugin-fuses": "^7.6.1",
-    "@electron/fuses": "^1.8.0",
-    "electron": "^34.0.0",
-    "electron-packager": "^17.1.2",
     "vite": "^5.0.0"
-  },
-  "config": {
-    "forge": {
-      "packagerConfig": {
-        "asar": true
-      },
-      "rebuildConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "BaseballTeamManagerPro"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ],
-      "plugins": [
-        {
-          "name": "@electron-forge/plugin-fuses",
-          "config": {
-            "version": "1.0.0",
-            "fuses": {
-              "RunAsNode": false,
-              "EnableCookieEncryption": true,
-              "EnableNodeOptionsEnvironmentVariable": false,
-              "EnableNodeCliInspectArguments": false,
-              "EnableEmbeddedAsarIntegrityValidation": true,
-              "OnlyLoadAppFromAsar": true
-            }
-          }
-        }
-      ]
-    }
   }
 }
