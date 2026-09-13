@@ -2,26 +2,44 @@ name: Deploy Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"] # 💡 如果您的主要分支叫 master，請改成 master
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm ci
-      - run: npm run build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build # 💡 這裡會幫您打包出 dist 資料夾
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
-      - uses: actions/deploy-pages@v4
+          path: ./dist # 💡 這裡非常關鍵！必須是 ./dist，不能是 ./ 或是根目錄
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
