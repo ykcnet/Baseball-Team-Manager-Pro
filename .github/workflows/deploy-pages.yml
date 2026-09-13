@@ -35,8 +35,7 @@ jobs:
       - name: Build project
         run: |
           chmod +x ./node_modules/.bin/vite
-          npm run build # 💡 這裡會幫您打包出 dist 資料夾
-
+          npm run build:web 💡 這裡會幫您打包出 dist 資料夾
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
