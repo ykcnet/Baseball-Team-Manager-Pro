@@ -40,7 +40,7 @@ export function renderDashboard(container) {
 
         <div class="card" id="card-scoreSheet">
           <h3>比賽紀錄</h3>
-          <p>建立完整的比賽紀錄，包含打擊、投手和局數統計。</p>
+          <p>建立完整的比賽紀錄表，包含打擊、投手和局數統計。</p>
           <button id="scoreSheetBtn" class="card-btn">前往</button>
         </div>
       </section>

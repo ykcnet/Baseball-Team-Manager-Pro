@@ -12,7 +12,7 @@ export function renderScoreSheetPage(container) {
       <div class="score-sheet-page-header">
         <div>
           <h2>📋 比賽紀錄</h2>
-          <p>建立完整的比賽紀錄，包含打擊、投手和局數統計</p>
+          <p>建立完整的比賽紀錄表，包含打擊、投手和局數統計</p>
         </div>
       </div>
 
@@ -62,7 +62,7 @@ function renderScoreSheetHistory(container, players) {
   if (scoreSheets.length === 0) {
     content.innerHTML = `
       <div class="score-sheet-history-empty">
-        <p>目前還沒有任何比賽紀錄。</p>
+        <p>目前還沒有任何比賽紀錄表。</p>
       </div>
     `;
     return;

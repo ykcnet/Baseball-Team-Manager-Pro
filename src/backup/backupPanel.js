@@ -1,4 +1,4 @@
-import { downloadTeamBackup, restoreTeamBackup } from './teamBackup.js';
+import { downloadTeamBackup, restoreTeamBackup, clearAllTeamData } from './teamBackup.js';
 
 function showMessage(container, type, message) {
   const messageBox = container.querySelector('.backup-message');
@@ -33,6 +33,16 @@ export function renderBackupPanel(container) {
         </div>
         <p class="backup-note">匯入會取代目前此瀏覽器中的球隊資料，請先匯出現有資料作為備份。</p>
       </div>
+
+      <div class="backup-panel backup-danger-zone" aria-labelledby="clearDataTitle">
+        <div class="backup-panel-header">
+          <div>
+            <h3 id="clearDataTitle">⚠️ 清除所有資料</h3>
+            <p>把這台裝置上的球員、先發名單、比賽紀錄全部清空，通常用在要把 App 交給別人使用之前。</p>
+          </div>
+        </div>
+        <button type="button" id="clearAllDataBtn" class="btn-danger">🗑️ 清除所有球員與比賽資料</button>
+      </div>
     </section>
   `;
 
@@ -46,6 +56,23 @@ export function renderBackupPanel(container) {
   });
 
   importButton.addEventListener('click', () => fileInput.click());
+
+  const clearAllDataBtn = container.querySelector('#clearAllDataBtn');
+  clearAllDataBtn.addEventListener('click', () => {
+    const confirmed = window.confirm(
+      '確定要清除這台裝置上「所有」球員、先發名單、比賽紀錄嗎？\n\n強烈建議先按「匯出備份」保留一份，這個動作無法復原。'
+    );
+
+    if (!confirmed) return;
+
+    // 再多一道確認，避免手滑誤刪
+    const doubleConfirmed = window.confirm('再次確認：真的要清空所有資料嗎？');
+    if (!doubleConfirmed) return;
+
+    clearAllTeamData();
+    showMessage(container, 'success', '所有資料已清除，正在重新載入畫面。');
+    window.setTimeout(() => window.location.reload(), 650);
+  });
 
   fileInput.addEventListener('change', async () => {
     const [file] = fileInput.files;

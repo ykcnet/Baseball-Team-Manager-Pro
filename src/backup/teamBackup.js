@@ -33,6 +33,7 @@ export function createTeamBackup() {
       players: Array.isArray(data.players) ? data.players : [],
       lineups: Array.isArray(data.lineups) ? data.lineups : [],
       games: Array.isArray(data.games) ? data.games : [],
+      scoreSheets: Array.isArray(data.scoreSheets) ? data.scoreSheets : [],
       gameEvents: readGameEvents()
     }
   };
@@ -55,8 +56,7 @@ export function downloadTeamBackup() {
   return backup;
 }
 
-export function restoreTeamBackup(rawText) {
-  let backup;
+export function restoreTeamBackup(rawText) {  let backup;
 
   try {
     backup = JSON.parse(rawText);
@@ -77,7 +77,8 @@ export function restoreTeamBackup(rawText) {
   const restoredData = {
     players: validCollection(backup.data.players, '球員名單'),
     lineups: validCollection(backup.data.lineups, '先發名單'),
-    games: validCollection(backup.data.games, '比賽資料')
+    games: validCollection(backup.data.games, '比賽資料'),
+    scoreSheets: validCollection(backup.data.scoreSheets ?? [], '比賽紀錄表')
   };
   const gameEvents = validCollection(backup.data.gameEvents ?? [], '比賽事件');
 
@@ -87,6 +88,20 @@ export function restoreTeamBackup(rawText) {
   return {
     players: restoredData.players.length,
     lineups: restoredData.lineups.length,
-    games: restoredData.games.length
+    games: restoredData.games.length,
+    scoreSheets: restoredData.scoreSheets.length
   };
+}
+
+// 清除所有球隊資料（球員、先發名單、比賽、比賽紀錄表、比賽事件）。
+// 用於：發佈/交機給別人使用前，把自己測試用的資料清乾淨。
+// 這個動作只會清掉「這台裝置、這個瀏覽器」的資料，不影響其他裝置。
+export function clearAllTeamData() {
+  saveData({
+    players: [],
+    lineups: [],
+    games: [],
+    scoreSheets: []
+  });
+  localStorage.setItem(GAME_EVENTS_KEY, JSON.stringify([]));
 }
