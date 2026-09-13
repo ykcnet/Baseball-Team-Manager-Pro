@@ -35,11 +35,11 @@ jobs:
       - name: Build project
         run: |
           chmod +x ./node_modules/.bin/vite
-          npm run build:web 💡 這裡會幫您打包出 dist 資料夾
+          npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist # 💡 這裡非常關鍵！必須是 ./dist，不能是 ./ 或是根目錄
+          path: ./dist
 
       - name: Deploy to GitHub Pages
         id: deployment
