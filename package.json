@@ -2,8 +2,8 @@
   "name": "baseball-team-manager-pro",
   "private": true,
   "version": "5.2.0",
-  "type": "commonjs",
-  "main": "electron-main.js",
+  "type": "module",
+  "main": "electron-main.cjs",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
