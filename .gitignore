@@ -55,3 +55,4 @@ desktop.ini
 # Vite
 # =========================
 vite.config.ts.timestamp-*
+out/
